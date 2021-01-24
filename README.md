@@ -8,7 +8,7 @@ morphpy
 https://www.anaconda.com/products/individual
 
 Then on the Terminal run the following commands one by one. But watch out for any errors in the installation.
-1. `pip install cmake numpy scipy scikit-learn seaborn pandas jupyter plotly svgpathtools jupyterlab tqdm`
+1. `pip install cmake numpy scipy scikit-learn seaborn pandas jupyter plotly svgpathtools jupyterlab tqdm kaleido`
 
 1. `pip install git+https://github.com/pysrvf/dpmatchsrvf.git`
 
