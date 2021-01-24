@@ -37,3 +37,5 @@ Then on the Terminal run the following commands one by one. But watch out for an
      q2n, gamma = match(q1, q2, is_closed=False, qfunc=True)
      ```
 1. Type `q2n, gamma` to show the output arrays
+
+1. `pip install git+https://github.com/morphpy/morphpy.git`
