@@ -40,5 +40,5 @@ q2 = np.array([[ 0.00552389,  0.15402398,  0.35514829,  0.40165261,  0.40273699,
 q2n, gamma = match(q1, q2, is_closed=False, qfunc=True)
 ```
 
-1. Then just type `q2n, gamma`
+1. Type `q2n, gamma` to show the output arrays
 
