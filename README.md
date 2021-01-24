@@ -20,7 +20,8 @@ It should show you a prompt like this
 
 1. Paste the following lines on the prompt
 
-``import numpy as np
+```
+import numpy as np
 from pysrvf.srvf_utils import match
 q1 = np.array([[ 0.00169204,  0.17140255,  0.37388457,  0.40324848,  0.40343557,
                  0.39931306,  0.3291022 ,  0.14283323,  0.03878632,  0.06112178,
@@ -37,7 +38,7 @@ q2 = np.array([[ 0.00552389,  0.15402398,  0.35514829,  0.40165261,  0.40273699,
                 -0.00937906, -0.11410367, -0.29597692, -0.37419586, -0.38819515]])
 
 q2n, gamma = match(q1, q2, is_closed=False, qfunc=True)
-``
+```
 
 1. Then just type `q2n, gamma`
 
