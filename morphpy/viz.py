@@ -9,6 +9,8 @@ import scipy.cluster.hierarchy as hc
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn import manifold
+import plotly.io as pio
+pio.kaleido.scope.default_format = "pdf"
 
 
 def plot_curve(X, titlestr=""):
@@ -22,6 +24,7 @@ def plot_pairwise_distance_matrix(Dvect):
     fig = go.Figure(data=go.Heatmap(z=Dmat))
     fig = set_generic_fig_properties(fig, title_text="Geodesic Distance matrix")
     fig.show()
+    fig.write_image("geodesic_distance_matrix.pdf")
 
 
 def plot_shapes(Xarray):
@@ -38,6 +41,7 @@ def plot_shapes(Xarray):
 
     fig = set_generic_fig_properties(fig, title_text="All shapes")
     fig.show()
+    fig.write_image("allshapes.pdf")
 
 
 def set_generic_fig_properties(fig, height=600, width=600, title_text="", showticks=False, showlegend=False):
@@ -67,11 +71,13 @@ def show_table(df):
 
 def plot_dendrogram(D, labelsdf):
 
-    labelnames = labelsdf['label']
+    labelnames = labelsdf['name']
     df = pd.DataFrame(data=sp.squareform(D), index=labelnames, columns=labelnames)
     linkage = hc.linkage(D, method='average')
     sns.clustermap(df, row_linkage=linkage, col_linkage=linkage)
+    plt.savefig('dendrogram.pdf')
     plt.show()
+
 
 
 def plot_deformation_field(pmean, mag_def_field):
@@ -80,6 +86,7 @@ def plot_deformation_field(pmean, mag_def_field):
     fig = go.Figure(data=data)
     fig = set_generic_fig_properties(fig, title_text="Deformation field plotted along the mean shape")
     fig.show()
+    fig.write_image("deformation_field.pdf")
 
 
 def plot_tsne_embedding(Dvect, labelsdf):
@@ -112,3 +119,4 @@ def plot_MDS(Dvect, labelsdf):
 
     fig = set_generic_fig_properties(fig, title_text='Multidimensional Scaling', showlegend=True)
     fig.show()
+    fig.write_image("mdsplot.pdf")
