@@ -104,6 +104,40 @@ def plot_tsne_embedding(Dvect, labelsdf):
 def plot_MDS(Dvect, labelsdf):
 
     seed = np.random.RandomState(seed=3)
+    mds = manifold.MDS(n_components=3, max_iter=3000, eps=1e-9, random_state=seed,
+                       dissimilarity="precomputed", n_jobs=1)
+    pos = mds.fit(sp.squareform(Dvect)).embedding_
+
+    # fig = go.Figure(data=go.Scatter(x=pos[0,:], y=pos[1,:]))
+    labelsdf['X'] = pos[:, 0]
+    labelsdf['Y'] = pos[:, 1]
+    labelsdf['Z'] = pos[:, 2]
+
+    # Rescale the scale column to lie between 0 and 1
+    labelsdf['scale'] = labelsdf['scale']/max(labelsdf['scale'])
+
+    fig = px.scatter(labelsdf, x="X", y="Y", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    fig = set_generic_fig_properties(fig, title_text='Multidimensional Scaling', showlegend=True)
+    fig.show()
+    fig.write_image("mdsplot_X_Y.pdf")
+
+    fig = px.scatter(labelsdf, x="X", y="Z", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    fig = set_generic_fig_properties(fig, title_text='Multidimensional Scaling', showlegend=True)
+    fig.show()
+    fig.write_image("mdsplot_X_Z.pdf")
+
+    fig = px.scatter(labelsdf, x="Y", y="Z", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    fig = set_generic_fig_properties(fig, title_text='Multidimensional Scaling', showlegend=True)
+    fig.show()
+    fig.write_image("mdsplot_Y_Z.pdf")
+
+
+def plot_shapes_on_MDS(Dvect, labelsdf):
+
+    seed = np.random.RandomState(seed=3)
     mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed,
                        dissimilarity="precomputed", n_jobs=1)
     pos = mds.fit(sp.squareform(Dvect)).embedding_
@@ -120,3 +154,14 @@ def plot_MDS(Dvect, labelsdf):
     fig = set_generic_fig_properties(fig, title_text='Multidimensional Scaling', showlegend=True)
     fig.show()
     fig.write_image("mdsplot.pdf")
+
+
+def center_and_rescale_curves(Xarray):
+    k, n, T = Xarray.shape
+
+    # Center and Scale
+    for ii in range(k):
+        Xarray[ii, :, :] - np.mean(Xarray[ii, :, :], axis=1).reshape((n, 1))
+        Xarray[ii, :, :]/= np.linalg.norm(Xarray[ii, :, :], 'fro')
+
+    return Xarray
