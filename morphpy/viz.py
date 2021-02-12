@@ -46,10 +46,10 @@ def plot_shapes(Xarray):
 
 def set_generic_fig_properties(fig, height=600, width=600, title_text="", showticks=False, showlegend=False):
     fig.update_layout(autosize=False, height=height, width=width, title_text=title_text,
-                      yaxis=dict(scaleanchor="x", scaleratio=1), showlegend=showlegend,
+                      yaxis=dict(scaleanchor="x"), showlegend=showlegend,
                       margin=dict(r=5, l=5, t=25, b=5), scene=dict(aspectmode="data"))
     fig.update_xaxes(showticklabels=showticks)
-    fig.update_yaxes(showticklabels=showticks, autorange="reversed")
+    fig.update_yaxes(showticklabels=showticks, autorange="reversed", scaleratio=1)
     return fig
     # layout = dict(plot_bgcolor='white', margin=dict(t=0, b=0, r=0, l=0, pad=0),
     #               xaxis=dict(showgrid=False, zeroline=False, mirror=True, linecolor='gray'),
