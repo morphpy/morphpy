@@ -135,25 +135,45 @@ def plot_MDS(Dvect, labelsdf):
     fig.write_image("mdsplot_Y_Z.pdf")
 
 
-def plot_shapes_on_MDS(Dvect, labelsdf):
+def plot_shapes_on_MDS(Xarray, Dvect, labelsdf):
 
+    k, n, T = Xarray.shape
     seed = np.random.RandomState(seed=3)
-    mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed,
+    mds = manifold.MDS(n_components=3, max_iter=3000, eps=1e-9, random_state=seed,
                        dissimilarity="precomputed", n_jobs=1)
     pos = mds.fit(sp.squareform(Dvect)).embedding_
 
     # fig = go.Figure(data=go.Scatter(x=pos[0,:], y=pos[1,:]))
     labelsdf['X'] = pos[:, 0]
     labelsdf['Y'] = pos[:, 1]
+    labelsdf['Z'] = pos[:, 2]
+
     # Rescale the scale column to lie between 0 and 1
     labelsdf['scale'] = labelsdf['scale']/max(labelsdf['scale'])
 
     fig = px.scatter(labelsdf, x="X", y="Y", color="label",
                      size='scale', hover_data=['name'], text="name")
-
+    newpos = np.vstack((labelsdf['X'], labelsdf['Y']))
+    add_shapes_to_fig(fig, Xarray, newpos)
     fig = set_generic_fig_properties(fig, title_text='Multidimensional Scaling', showlegend=True)
     fig.show()
-    fig.write_image("mdsplot.pdf")
+    fig.write_image("mdsplot_shape_X_Y.pdf")
+
+    fig = px.scatter(labelsdf, x="X", y="Z", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    newpos = np.vstack((labelsdf['X'], labelsdf['Z']))
+    add_shapes_to_fig(fig, Xarray, newpos)
+    fig = set_generic_fig_properties(fig, title_text='Multidimensional Scaling', showlegend=True)
+    fig.show()
+    fig.write_image("mdsplot_shape_X_Z.pdf")
+
+    fig = px.scatter(labelsdf, x="Y", y="Z", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    newpos = np.vstack((labelsdf['Y'], labelsdf['Z']))
+    add_shapes_to_fig(fig, Xarray, newpos)
+    fig = set_generic_fig_properties(fig, title_text='Multidimensional Scaling', showlegend=True)
+    fig.show()
+    fig.write_image("mdsplot_shape_Y_Z.pdf")
 
 
 def center_and_rescale_curves(Xarray):
@@ -161,7 +181,60 @@ def center_and_rescale_curves(Xarray):
 
     # Center and Scale
     for ii in range(k):
-        Xarray[ii, :, :] - np.mean(Xarray[ii, :, :], axis=1).reshape((n, 1))
-        Xarray[ii, :, :]/= np.linalg.norm(Xarray[ii, :, :], 'fro')
+        Xarray[ii, :, :] -= np.mean(Xarray[ii, :, :], axis=1).reshape((n, 1))
+        Xarray[ii, :, :] /= np.linalg.norm(Xarray[ii, :, :], 'fro')
 
     return Xarray
+
+
+def shift_center(Xarray, newpos):
+
+    # No error checking for dimensions of Xarray and pos
+    Xarray = center_and_rescale_curves(Xarray)
+    k, n, T = Xarray.shape
+    for ii in range(k):
+        Xarray[ii] += newpos[:, 0][:, np.newaxis]
+    return Xarray
+
+
+def shift_center_and_scale(Xarray, newpos, newscale):
+
+    # No error checking for dimensions of Xarray and pos
+    Xarray = center_and_rescale_curves(Xarray)
+    Xarray *= newscale
+    k, n, T = Xarray.shape
+    for ii in range(k):
+        Xarray[ii] += newpos[:, ii][:, np.newaxis]
+    return Xarray
+
+
+def get_bounding_box(coords):
+
+    # Assume coords are always in 2D
+    xmin = np.min(coords[0, :])
+    xmax = np.max(coords[0, :])
+
+    ymin = np.min(coords[1, :])
+    ymax = np.max(coords[1, :])
+
+    width = xmax - xmin
+    height = ymax - ymin
+    deltax = width/coords.shape[1]
+    deltay = height/coords.shape[1]
+
+    mean_x_spacing = np.mean(np.diff(np.sort(coords[0, :])))
+    mean_y_spacing = np.mean(np.diff(np.sort(coords[1, :])))
+
+    return {'xmin': xmin, 'ymin': ymin, 'xmax': xmax, 'ymax': ymax,
+            'width': width, 'height': height, 'deltax': deltax, 'deltay': deltay,
+            'mean_x_spacing': mean_x_spacing, 'mean_y_spacing': mean_y_spacing
+            }
+
+
+def add_shapes_to_fig(fig, Xarray, newpos):
+    k, _, _ = Xarray.shape
+    bbox = get_bounding_box(newpos)
+    Xarraynew = shift_center_and_scale(Xarray, newpos, bbox['mean_x_spacing']*15)
+    for ii in range(k):
+        fig.add_trace(go.Scatter(x=Xarraynew[ii][0,], y=Xarraynew[ii][1,], mode='lines',
+                                 line=dict(color='blue', width = 0.5)))
