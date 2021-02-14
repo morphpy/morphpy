@@ -27,9 +27,11 @@ def plot_pairwise_distance_matrix(Dvect):
     fig.write_image("geodesic_distance_matrix.pdf")
 
 
-def plot_shapes(Xarray):
-    N, n, T = np.shape(Xarray)
+def plot_shapes(Xarray1):
+    N, n, T = np.shape(Xarray1)
     # n has to be equal to 2
+    Xarray = np.copy(Xarray1)
+    Xarray = center_and_rescale_curves(Xarray)
 
     fig = make_subplots(rows=int(np.ceil(N**0.5)), cols=int(np.ceil(N ** 0.5)))
     rows = int(np.ceil(N**0.5))
@@ -39,22 +41,32 @@ def plot_shapes(Xarray):
         ix, iy = np.unravel_index(ii, (rows, cols))
         fig.add_trace(go.Scatter(x=Xarray[ii][0,], y=Xarray[ii][1,], mode='lines'), row=ix.tolist()+1, col=iy.tolist()+1)
 
-    fig = set_generic_fig_properties(fig, title_text="All shapes")
+    fig = set_generic_subplot_fig_properties(fig, title_text="All shapes")
     fig.show()
     fig.write_image("allshapes.pdf")
 
 
+def set_generic_subplot_fig_properties(fig, height=600, width=600, title_text="", showticks=False, showlegend=False):
+    fig.update_yaxes(autorange="reversed", scaleanchor="x", scaleratio=1)
+    fig.update_layout(autosize=True, height=height, width=width, title_text=title_text,
+                      showlegend=showlegend,
+                      margin=dict(r=5, l=5, t=25, b=5))
+    axes = [fig.layout[e] for e in fig.layout if e[1:5] == 'axis']
+    for ii in range(1, len(fig.data)+1):
+        fig['layout']['yaxis'+str(ii)].update(scaleanchor="x"+str(ii), scaleratio=1)
+    fig.update_xaxes(showticklabels=showticks)
+    fig.update_yaxes(showticklabels=showticks)
+
+    return fig
+
+
 def set_generic_fig_properties(fig, height=600, width=600, title_text="", showticks=False, showlegend=False):
-    fig.update_layout(autosize=False, height=height, width=width, title_text=title_text,
+    fig.update_layout(autosize=True, height=height, width=width, title_text=title_text,
                       yaxis=dict(scaleanchor="x"), showlegend=showlegend,
-                      margin=dict(r=5, l=5, t=25, b=5), scene=dict(aspectmode="data"))
+                      margin=dict(r=5, l=5, t=25, b=5), scene=dict(aspectmode="data"), yaxis2=dict(scaleanchor="x", scaleratio=1))
     fig.update_xaxes(showticklabels=showticks)
     fig.update_yaxes(showticklabels=showticks, autorange="reversed", scaleratio=1)
     return fig
-    # layout = dict(plot_bgcolor='white', margin=dict(t=0, b=0, r=0, l=0, pad=0),
-    #               xaxis=dict(showgrid=False, zeroline=False, mirror=True, linecolor='gray'),
-    #               yaxis=dict(showgrid=False, zeroline=False, mirror=True, linecolor='gray'))
-
 
 
 def show_table(df):
