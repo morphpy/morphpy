@@ -1,1 +1,3 @@
-__all__ = ['morphpy']
+__all__ = ['Morphpy']
+
+from morphpy.morphpyclass import Morphpy
