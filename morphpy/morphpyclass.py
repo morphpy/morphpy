@@ -14,13 +14,13 @@ class Morphpy(object):
         if filelist and csv:
             self.load(filelist=filelist, csv=csv)
 
-    def load(self, filelist="", csv=""):
+    def load(self, filelist="", csv="", T=100):
 
         if filelist == "" or csv == "":
             sys.stdout.write("Please provide a valid filelist and a csv file\n")
             return
         try:
-            self.Xarray = readsvgcurvelist(filelist)
+            self.Xarray = readsvgcurvelist(filelist, T=T)
             self.taxoncodes = read_csv(csv)
         except (FileNotFoundError, OSError, Exception) as excp:
             sys.stdout.write(str(excp) + '\n')
