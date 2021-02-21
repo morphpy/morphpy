@@ -113,6 +113,7 @@ def plot_tsne_embedding(Dvect, labelsdf):
     fig.show()
 
 
+# TODO The MDS calculation could be separated from plotting
 def plot_MDS(Dvect, labelsdf):
 
     seed = np.random.RandomState(seed=3)
@@ -147,6 +148,7 @@ def plot_MDS(Dvect, labelsdf):
     fig.write_image("mdsplot_Y_Z.pdf")
 
 
+# TODO The MDS calculation could be separated from plotting
 def plot_shapes_on_MDS(Xarray, Dvect, labelsdf):
 
     k, n, T = Xarray.shape
@@ -250,3 +252,72 @@ def add_shapes_to_fig(fig, Xarray, newpos):
     for ii in range(k):
         fig.add_trace(go.Scatter(x=Xarraynew[ii][0,], y=Xarraynew[ii][1,], mode='lines',
                                  line=dict(color='blue', width = 0.5)))
+
+
+# TODO the below functionality could be merged with plot_MDS
+def plot_tpca(covdata, labelsdf):
+
+    # fig = go.Figure(data=go.Scatter(x=pos[0,:], y=pos[1,:]))
+    labelsdf['X'] = covdata['Eigproj'][:, 0]
+    labelsdf['Y'] = covdata['Eigproj'][:, 1]
+    labelsdf['Z'] = covdata['Eigproj'][:, 2]
+
+    # Rescale the scale column to lie between 0 and 1
+    labelsdf['scale'] = labelsdf['scale']/max(labelsdf['scale'])
+
+    fig = px.scatter(labelsdf, x="X", y="Y", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    fig = set_generic_fig_properties(fig, title_text='Principal Component Analysis (PCA)', showlegend=True)
+    fig.show()
+    fig.write_image("pcaplot_X_Y.pdf")
+
+    fig = px.scatter(labelsdf, x="X", y="Z", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    fig = set_generic_fig_properties(fig, title_text='Principal Component Analysis (PCA)', showlegend=True)
+    fig.show()
+    fig.write_image("pcaplot_X_Z.pdf")
+
+    fig = px.scatter(labelsdf, x="Y", y="Z", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    fig = set_generic_fig_properties(fig, title_text='Principal Component Analysis (PCA)', showlegend=True)
+    fig.show()
+    fig.write_image("pcaplot_Y_Z.pdf")
+
+
+# TODO This functionality could be merged with above
+def plot_shapes_on_tpca(Xarray, covdata, labelsdf):
+
+    k, n, T = Xarray.shape
+
+    # fig = go.Figure(data=go.Scatter(x=pos[0,:], y=pos[1,:]))
+    labelsdf['X'] = covdata['Eigproj'][:, 0]
+    labelsdf['Y'] = covdata['Eigproj'][:, 1]
+    labelsdf['Z'] = covdata['Eigproj'][:, 2]
+
+    # Rescale the scale column to lie between 0 and 1
+    labelsdf['scale'] = labelsdf['scale']/max(labelsdf['scale'])
+
+    fig = px.scatter(labelsdf, x="X", y="Y", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    newpos = np.vstack((labelsdf['X'], labelsdf['Y']))
+    add_shapes_to_fig(fig, Xarray, newpos)
+    fig = set_generic_fig_properties(fig, title_text='Principal Component Analysis (PCA)', showlegend=True)
+    fig.show()
+    fig.write_image("pcaplot_shape_X_Y.pdf")
+
+    fig = px.scatter(labelsdf, x="X", y="Z", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    newpos = np.vstack((labelsdf['X'], labelsdf['Z']))
+    add_shapes_to_fig(fig, Xarray, newpos)
+    fig = set_generic_fig_properties(fig, title_text='Principal Component Analysis (PCA)', showlegend=True)
+    fig.show()
+    fig.write_image("pcaplot_shape_X_Z.pdf")
+
+    fig = px.scatter(labelsdf, x="Y", y="Z", color="label",
+                     size='scale', hover_data=['name'], text="name")
+    newpos = np.vstack((labelsdf['Y'], labelsdf['Z']))
+    add_shapes_to_fig(fig, Xarray, newpos)
+    fig = set_generic_fig_properties(fig, title_text='Principal Component Analysis (PCA)', showlegend=True)
+    fig.show()
+    fig.write_image("pcaplot_shape_Y_Z.pdf")
+
