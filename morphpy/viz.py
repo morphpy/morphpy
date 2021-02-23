@@ -66,6 +66,8 @@ def set_generic_fig_properties(fig, height=600, width=600, title_text="", showti
                       margin=dict(r=5, l=5, t=25, b=5), scene=dict(aspectmode="data"), yaxis2=dict(scaleanchor="x", scaleratio=1))
     fig.update_xaxes(showticklabels=showticks)
     fig.update_yaxes(showticklabels=showticks, autorange="reversed", scaleratio=1)
+    fig.update_layout(xaxis_visible=True, xaxis_showticklabels=True, yaxis_visible=True, yaxis_showticklabels=True)
+
     return fig
 
 
@@ -321,3 +323,19 @@ def plot_shapes_on_tpca(Xarray, covdata, labelsdf):
     fig.show()
     fig.write_image("pcaplot_shape_Y_Z.pdf")
 
+
+def plot_pca_scree(covdata):
+
+    # Plot variance
+    PClabels = ["PC" + str(i) for i in range(1, 11)]
+    df = {'Components': PClabels, '% Explained Variance': covdata['S'][range(10)] / np.sum(covdata['S']) * 100,
+          '% Cumulative Explained Variance': np.cumsum(covdata['S'][range(10)]) / np.sum(covdata['S']) * 100}
+    vardf = pd.DataFrame(data=df)
+    # fig.add_trace(go.Bar(data = vardf, x='Components', y='% Explained Variance'))
+
+    fig = go.Figure(go.Bar(x=vardf['Components'], y=vardf['% Explained Variance'], name="Variance"))
+    fig.add_trace(go.Scatter(x=vardf['Components'], y=vardf['% Cumulative Explained Variance'], name="Cumul. Variance"))
+    fig.update_layout(autosize=True, title_text='PCA Scree plot', showlegend=True)
+
+    fig.show()
+    fig.write_image("pca_screeplot.pdf")

@@ -6,7 +6,7 @@ from pysrvf.generic_utils import batch_curve_to_q, q_to_curve
 from pysrvf.compute_geodesic import geodesic_distance_all
 from pysrvf.tpca import tpca_from_data
 from .viz import plot_shapes, plot_curve, plot_pairwise_distance_matrix, show_table, \
-    plot_deformation_field, plot_dendrogram, plot_MDS, plot_shapes_on_MDS, plot_tpca, plot_shapes_on_tpca
+    plot_deformation_field, plot_dendrogram, plot_MDS, plot_shapes_on_MDS, plot_tpca, plot_shapes_on_tpca, plot_pca_scree
 
 
 class Morphpy(object):
@@ -49,3 +49,4 @@ class Morphpy(object):
         plot_shapes_on_MDS(self.Xarray, self.geo_dist_arr, self.taxoncodes)
         plot_tpca(self.covdata, self.taxoncodes)
         plot_shapes_on_tpca(self.Xarray, self.covdata, self.taxoncodes)
+        plot_pca_scree(self.covdata)
