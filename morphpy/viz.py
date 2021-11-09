@@ -25,6 +25,7 @@ def plot_pairwise_distance_matrix(Dvect):
     fig = set_generic_fig_properties(fig, title_text="Geodesic Distance matrix")
     fig.show()
     fig.write_image("geodesic_distance_matrix.pdf")
+    np.savetxt("Geodesic_Distances.csv", Dmat, delimiter=",")
 
 
 def plot_shapes(Xarray1):
@@ -284,7 +285,7 @@ def plot_tpca(covdata, labelsdf):
     fig = set_generic_fig_properties(fig, title_text='Principal Component Analysis (PCA)', showlegend=True)
     fig.show()
     fig.write_image("pcaplot_Y_Z.pdf")
-
+    labelsdf.to_csv('PCAscores.csv', float_format="%g")
 
 # TODO This functionality could be merged with above
 def plot_shapes_on_tpca(Xarray, covdata, labelsdf):
