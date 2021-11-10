@@ -19,13 +19,15 @@ def plot_curve(X, titlestr=""):
     fig.show()
 
 
-def plot_pairwise_distance_matrix(Dvect):
+def plot_pairwise_distance_matrix(Dvect, labelsdf):
     Dmat = sp.squareform(Dvect)
     fig = go.Figure(data=go.Heatmap(z=Dmat))
     fig = set_generic_fig_properties(fig, title_text="Geodesic Distance matrix")
     fig.show()
     fig.write_image("geodesic_distance_matrix.pdf")
-    np.savetxt("Geodesic_Distances.csv", Dmat, delimiter=",")
+
+    df = pd.DataFrame(Dmat, columns=labelsdf['name'], index=labelsdf['name'])
+    df.to_csv('Geodesic_Distances.csv', float_format="%g")
 
 
 def plot_shapes(Xarray1):

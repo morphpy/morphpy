@@ -42,7 +42,7 @@ class Morphpy(object):
 
     def save(self):
         plot_curve(self.pmean, 'Mean Shape')
-        plot_pairwise_distance_matrix(self.geo_dist_arr)
+        plot_pairwise_distance_matrix(self.geo_dist_arr, self.taxoncodes)
         plot_deformation_field(self.pmean, self.mag_def_field)
         plot_dendrogram(self.geo_dist_arr, self.taxoncodes)
         plot_MDS(self.geo_dist_arr, self.taxoncodes)
